@@ -2,10 +2,14 @@ package com.metro.gwuexplorer
 
 import android.content.Context
 import android.content.Intent
+import android.location.Address
+import android.location.Geocoder
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.widget.*
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,14 +60,34 @@ class MainActivity : AppCompatActivity() {
         
         go.setOnClickListener {
 
-            val choices = listOf("667 M Street Washington, DC 20585", "668 M Street Washington, DC 20585")
+           // val choices = listOf("667 M Street Washington, DC 20585", "668 M Street Washington, DC 20585")
+
+            // Pass a context (e.g. Activity) and locale
+            val geocoder = Geocoder(this, Locale.getDefault())
+            val locationName = stationname.getText().toString()
+
+            val maxResults = 2
+
+            val results: List<Address> = geocoder.getFromLocationName(locationName,maxResults)
+
+
+
+            val first = results[0]
+            val first_go = first.getAddressLine(0)
+//            val second = results[1]
+//            val second_go = second.getAddressLine(0)
+
+            val addr: List<String> = listOf(first_go)
+
+
+            //val first = results as List<String>
 
             val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
-            arrayAdapter.addAll(choices)
+            arrayAdapter.addAll(addr)
             AlertDialog.Builder(this)
                 .setTitle("Select an option")
                 .setAdapter(arrayAdapter) { dialog, which ->
-                    Toast.makeText(this, "You picked: ${choices[which]}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "You picked: ${addr[which]}", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("Cancel") { dialog, which ->
                     dialog.dismiss()
@@ -75,9 +99,9 @@ class MainActivity : AppCompatActivity() {
             loadData();
 
 
-            val intent: Intent = Intent(this, RouteActivity::class.java)
+            //val intent: Intent = Intent(this, RouteActivity::class.java)
 
-           startActivity(intent)
+           //startActivity(intent)
         }
 
         alert.setOnClickListener {
