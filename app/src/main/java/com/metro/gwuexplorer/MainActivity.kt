@@ -62,25 +62,48 @@ class MainActivity : AppCompatActivity() {
 
            // val choices = listOf("667 M Street Washington, DC 20585", "668 M Street Washington, DC 20585")
 
-            // Pass a context (e.g. Activity) and locale
-            val geocoder = Geocoder(this, Locale.getDefault())
-            val locationName = stationname.getText().toString()
-
-            val maxResults = 2
-
-            val results: List<Address> = geocoder.getFromLocationName(locationName,maxResults)
 
 
+                // Pass a context (e.g. Activity) and locale
+                val geocoder = Geocoder(this, Locale.getDefault())
+                val locationName = stationname.getText().toString()
 
-            val first = results[0]
-            val first_go = first.getAddressLine(0)
-//            val second = results[1]
-//            val second_go = second.getAddressLine(0)
+                val maxResults = 3
 
-            val addr: List<String> = listOf(first_go)
+                val results: List<Address> = geocoder.getFromLocationName(locationName, maxResults)
+                lateinit var addr: MutableList<String?>
+
+                if (results != null && results.size > 0) {
 
 
-            //val first = results as List<String>
+//                var addString: String?
+//
+//                val firstAdd = results[0]
+//
+//                var n=firstAdd.maxAddressLineIndex
+//                var x:Int=0
+//                while ( n>=0){
+//                    addString = firstAdd.getAddressLine(x)
+//                    Log.d("itembelike",addString)
+//                    addr.add(addString)
+//                    n--
+//                    x++
+//                }
+
+                    val first = results[0]
+                    val firstAdd = first.getAddressLine(0)
+//
+//                //val secondAdd = first.getAddressLine(1)
+//               // Log.d("second Add:", secondAdd)
+//              // val  addr: List<String> = listOf(firstAdd)
+//
+                    addr = mutableListOf(firstAdd)
+
+
+                }
+
+
+
 
             val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
             arrayAdapter.addAll(addr)
