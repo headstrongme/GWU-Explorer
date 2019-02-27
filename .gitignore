@@ -1,2 +1,9 @@
 google_map_api.xml
+*.iml
 .gradle
+/local.properties
+.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
