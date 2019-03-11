@@ -1,4 +1,4 @@
-google_map_api.xml
+google_maps_api.xml
 *.iml
 .gradle
 /local.properties
@@ -7,3 +7,4 @@ google_map_api.xml
 /build
 /captures
 .externalNativeBuild
+app/app.iml
