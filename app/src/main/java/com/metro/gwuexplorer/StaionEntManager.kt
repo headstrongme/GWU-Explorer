@@ -1,18 +1,18 @@
 package com.metro.gwuexplorer
 
+import android.location.Address
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
-class AlertManager {
-    // OkHttp is a library used to make network calls
+
+class StationEntManager {
+
     private val okHttpClient: OkHttpClient
 
-    //private var oAuthToken: String? = null
 
-    // This runs extra code when TwitterManager is created (e.g. the constructor)
     init {
         val builder = OkHttpClient.Builder()
 
@@ -31,19 +31,21 @@ class AlertManager {
     }
 
 
+    fun retrieveNearbyStation(
 
-
-
-    fun retrieveAlert(
-        successCallback: (List<Alert>) -> Unit,
+        address: Address,
+        successCallback: (List<String>) -> Unit,
         errorCallback: (Exception) -> Unit
     ) {
         // Data setup
+        val lat = address.latitude
+        val lon = address.longitude
+        val radius = "30"
         val primaryKey = "da0eb4c222b5442ea5a2a59b3677b73e"
 
         // Building the request, passing the OAuth token as a header
         val request = Request.Builder()
-            .url("https://api.wmata.com/Incidents.svc/json/Incidents")
+            .url("https://api.wmata.com/Rail.svc/json/jStationEntrances?$lat&$lon&$radius")
             .header("api_key", "$primaryKey")
             .build()
 
@@ -55,33 +57,26 @@ class AlertManager {
 
             override fun onResponse(call: Call, response: Response) {
                 // Similar success / error handling to last time
-                val alerts = mutableListOf<Alert>()
+                val ent = mutableListOf<String>()
                 val responseString = response.body()?.string()
 
                 if (response.isSuccessful && responseString != null) {
-                    val incidents = JSONObject(responseString).getJSONArray("Incidents")
-                    for (i in 0 until incidents.length()) {
-                        val curr = incidents.getJSONObject(i)
-                        val linename = curr.getString("LinesAffected")
-                        val desc = curr.getString("Description")
+                    val statuses = JSONObject(responseString).getJSONArray("Entrances")
+                    for (i in 0 until statuses.length()) {
+                        val curr = statuses.getJSONObject(i)
+                        val text = curr.getString("Name")
 
-
-
-                        alerts.add(
-                            Alert(
-                                icon = "http image",
-                                lineName = linename,
-                                description =desc
-                            )
-                        )
+                        ent.add(text)
                     }
-                    successCallback(alerts)
+                    successCallback(ent)
                     //...
                 } else {
                     // Invoke the callback passed to our [retrieveTweets] function.
-                    errorCallback(Exception("Search Tweets call failed"))
+                    errorCallback(Exception("Search Entrances call failed"))
                 }
             }
         })
     }
+
+
 }

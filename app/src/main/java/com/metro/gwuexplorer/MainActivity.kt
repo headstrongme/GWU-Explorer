@@ -13,7 +13,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-
+    private val entManager: StationEntManager = StationEntManager()
     private lateinit var stationname : EditText
     private lateinit var remember: CheckBox
     private lateinit var go : Button
@@ -21,6 +21,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var checkedBox: CheckBox
     private lateinit var text: String
     private  var bool1: Boolean = false
+    private  var lati:Double? =null
+    private  var long:Double? = null
+    private lateinit var first:Address
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +74,7 @@ class MainActivity : AppCompatActivity() {
                 val maxResults = 3
 
                 val results: List<Address> = geocoder.getFromLocationName(locationName, maxResults)
+
                 lateinit var addr: MutableList<String?>
 
                 if (results != null && results.size > 0) {
@@ -90,8 +94,12 @@ class MainActivity : AppCompatActivity() {
 //                    x++
 //                }
 
-                    val first = results[0]
+                     first = results[0]
+                     lati = first.latitude
+
+                     long = first.longitude
                     val firstAdd = first.getAddressLine(0)
+                    Log.d("first:","kjgkj$first")
 //
 //                //val secondAdd = first.getAddressLine(1)
 //               // Log.d("second Add:", secondAdd)
@@ -102,20 +110,42 @@ class MainActivity : AppCompatActivity() {
 
                 }
 
+            entManager.retrieveNearbyStation(
+                address = first,
+                successCallback = { list ->
+                    runOnUiThread {
+                        // Create the adapter and assign it to the RecyclerView
 
 
+                        val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+                        arrayAdapter.addAll(list)
 
-            val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
-            arrayAdapter.addAll(addr)
-            AlertDialog.Builder(this)
-                .setTitle("Select an option")
-                .setAdapter(arrayAdapter) { dialog, which ->
-                    Toast.makeText(this, "You picked: ${addr[which]}", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("Cancel") { dialog, which ->
-                    dialog.dismiss()
-                }
-                .show()
+                        AlertDialog.Builder(this)
+                            .setTitle("Select an option")
+                            .setAdapter(arrayAdapter) { dialog, which ->
+                                Toast.makeText(this, "You picked: ${list[which]}", Toast.LENGTH_SHORT).show()
+
+
+                                val intent = Intent(this, RouteActivity::class.java)
+                                intent.putExtra("lat", lati)
+                                intent.putExtra("lon", long)
+                                startActivity(intent)
+
+                            }
+                            .setNegativeButton("Cancel") { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .show()
+
+
+                    }
+                },
+                errorCallback = {
+                    runOnUiThread {
+                        // Runs if we have an error
+                        Toast.makeText(this@MainActivity, "Error retrieving Tweets", Toast.LENGTH_LONG).show()
+                    }
+                })
 
 
             saveData();
@@ -137,7 +167,10 @@ class MainActivity : AppCompatActivity() {
         updateText()
 
     }
-   private  fun saveData ()
+
+
+
+    private  fun saveData ()
     {
         // Pass the name and the file-create mode (e.g. private to our app)
         val preferences = getSharedPreferences("gwu-explorer", Context.MODE_PRIVATE)

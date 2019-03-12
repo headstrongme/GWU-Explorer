@@ -27,7 +27,7 @@ class AlertActivity : AppCompatActivity() {
 
 
 
-        alertManager.retrieveTweets(
+        alertManager.retrieveAlert(
 
             successCallback = { alerts ->
                 runOnUiThread {

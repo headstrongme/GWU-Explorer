@@ -11,6 +11,7 @@ class RouteActivity : AppCompatActivity() {
     private val alertManager: AlertManager = AlertManager()
     private lateinit var recyclerView: RecyclerView
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_alert)
@@ -21,7 +22,7 @@ class RouteActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
 
-        alertManager.retrieveTweets(
+        alertManager.retrieveAlert(
 
             successCallback = { alerts ->
                 runOnUiThread {
