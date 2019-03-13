@@ -66,7 +66,6 @@ class AlertManager {
                         val desc = curr.getString("Description")
 
 
-
                         alerts.add(
                             Alert(
                                 icon = "http image",
@@ -76,10 +75,12 @@ class AlertManager {
                         )
                     }
                     successCallback(alerts)
-                    //...
+
                 } else {
-                    // Invoke the callback passed to our [retrieveTweets] function.
-                    errorCallback(Exception("Search Tweets call failed"))
+                    // Invoke the callback passed to our [retrieveAlerts] function.
+                    errorCallback(Exception("Search alerts call failed"))
+
+
                 }
             }
         })

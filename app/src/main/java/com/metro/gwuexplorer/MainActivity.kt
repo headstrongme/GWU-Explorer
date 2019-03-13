@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private  var lati:Double? =null
     private  var long:Double? = null
     private lateinit var first:Address
+    private lateinit var temp:String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,24 +96,21 @@ class MainActivity : AppCompatActivity() {
 //                }
 
                      first = results[0]
-                     lati = first.latitude
 
-                     long = first.longitude
                     val firstAdd = first.getAddressLine(0)
-                    Log.d("first:","kjgkj$first")
+                    Log.d("first:","test$first")
 //
-//                //val secondAdd = first.getAddressLine(1)
-//               // Log.d("second Add:", secondAdd)
-//              // val  addr: List<String> = listOf(firstAdd)
-//
-                    addr = mutableListOf(firstAdd)
+//              val secondAdd = first.getAddressLine(1)
+//              Log.d("second Add:", secondAdd)
+//              val  addr: List<String> = listOf(firstAdd)
+//              addr = mutableListOf(firstAdd)
 
 
                 }
 
             entManager.retrieveNearbyStation(
                 address = first,
-                successCallback = { list ->
+                successCallback = { list,station ->
                     runOnUiThread {
                         // Create the adapter and assign it to the RecyclerView
 
@@ -125,10 +123,11 @@ class MainActivity : AppCompatActivity() {
                             .setAdapter(arrayAdapter) { dialog, which ->
                                 Toast.makeText(this, "You picked: ${list[which]}", Toast.LENGTH_SHORT).show()
 
+                            Log.d("code","${station[which]}")
+                                temp="${station[which]}"
 
                                 val intent = Intent(this, RouteActivity::class.java)
-                                intent.putExtra("lat", lati)
-                                intent.putExtra("lon", long)
+                                intent.putExtra("StationCode", temp)
                                 startActivity(intent)
 
                             }

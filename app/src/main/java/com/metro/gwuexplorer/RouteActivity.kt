@@ -1,5 +1,6 @@
 package com.metro.gwuexplorer
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -8,7 +9,7 @@ import android.widget.Toast
 
 class RouteActivity : AppCompatActivity() {
 
-    private val alertManager: AlertManager = AlertManager()
+    private val routeManager: RouteManager = RouteManager()
     private lateinit var recyclerView: RecyclerView
 
 
@@ -21,21 +22,23 @@ class RouteActivity : AppCompatActivity() {
         // Set the direction of our list to be vertical
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        val intentt: Intent = intent
+        val stationcodeNext:String =intentt.getStringExtra("StationCode")
 
-        alertManager.retrieveAlert(
-
-            successCallback = { alerts ->
+        routeManager.retrieveStationList(
+            codeNext=stationcodeNext,
+            successCallback = { path ->
                 runOnUiThread {
                     // Create the adapter and assign it to the RecyclerView
 
                     /* TODO change adapter below*/
-                    recyclerView.adapter = AlertAdapter(alerts)
+                    recyclerView.adapter = RouteAdapter(path)
                 }
             },
             errorCallback = {
                 runOnUiThread {
                     // Runs if we have an error
-                    Toast.makeText(this@RouteActivity, "Error retrieving Tweets", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@RouteActivity, "Error retrieving Station List", Toast.LENGTH_LONG).show()
                 }
             }
         )
