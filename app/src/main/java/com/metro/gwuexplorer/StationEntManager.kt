@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit
 class StationEntManager {
 
     private val okHttpClient: OkHttpClient
-    //private val mainActivity: MainActivity= MainActivity()
 
     init {
         val builder = OkHttpClient.Builder()
@@ -73,11 +72,10 @@ class StationEntManager {
                         ent.add(text)
                     }
                     successCallback(ent,stationCode)
-                    //...
+
                 } else {
                     // Invoke the callback passed to our [retrieveTweets] function.
                     errorCallback(Exception("Search Entrances call failed"))
-
                 }
             }
         })

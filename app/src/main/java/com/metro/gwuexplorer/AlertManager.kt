@@ -1,5 +1,6 @@
 package com.metro.gwuexplorer
 
+import android.widget.Toast
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
@@ -10,9 +11,6 @@ class AlertManager {
     // OkHttp is a library used to make network calls
     private val okHttpClient: OkHttpClient
 
-    //private var oAuthToken: String? = null
-
-    // This runs extra code when TwitterManager is created (e.g. the constructor)
     init {
         val builder = OkHttpClient.Builder()
 
@@ -29,8 +27,6 @@ class AlertManager {
 
         okHttpClient = builder.build()
     }
-
-
 
 
 
@@ -65,7 +61,6 @@ class AlertManager {
                         val linename = curr.getString("LinesAffected")
                         val desc = curr.getString("Description")
 
-
                         alerts.add(
                             Alert(
                                 icon = "http image",
@@ -79,7 +74,6 @@ class AlertManager {
                 } else {
                     // Invoke the callback passed to our [retrieveAlerts] function.
                     errorCallback(Exception("Search alerts call failed"))
-
 
                 }
             }

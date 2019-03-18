@@ -31,8 +31,16 @@ class AlertActivity : AppCompatActivity() {
 
             successCallback = { alerts ->
                 runOnUiThread {
-                    // Create the adapter and assign it to the RecyclerView
-                    recyclerView.adapter = AlertAdapter(alerts)
+
+                    if (alerts.isNotEmpty()){
+                        // Create the adapter and assign it to the RecyclerView
+                        recyclerView.adapter = AlertAdapter(alerts)
+                    }
+                    else{
+                        Toast.makeText(this@AlertActivity, "No Alerts to show", Toast.LENGTH_LONG).show()
+                    }
+
+
                 }
             },
             errorCallback = {

@@ -9,7 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.*
-import java.util.*
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var checkedBox: CheckBox
     private lateinit var text: String
     private  var bool1: Boolean = false
-    private  var lati:Double? =null
-    private  var long:Double? = null
     private lateinit var first:Address
     private lateinit var temp:String
 
@@ -35,9 +33,6 @@ class MainActivity : AppCompatActivity() {
         remember = findViewById(R.id.remember)
         go = findViewById(R.id.go)
         alert = findViewById(R.id.alert)
-
-
-
         checkedBox = findViewById(R.id.remember);
 
         AlertDialog.Builder(this)
@@ -47,39 +42,30 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("OK"){dialog, which ->  }
             .show()
 
+//        if (checkedBox.isChecked()) {
+//
+//            // Pass the name and the file-create mode (e.g. private to our app)
+//            val preferences = getSharedPreferences("gwu-explorer", Context.MODE_PRIVATE)
+//            // Writing to preferences (make sure you call apply)
+//            preferences.edit().putString("saved_stationName", stationname.text.toString()).apply()
+//            // Reading from preferences, indicate default if not present
+//            val savedStationName = preferences.getString("saved_stationName", "")
+//
+//        }
 
-
-        if (checkedBox.isChecked()) {
-
-            // Pass the name and the file-create mode (e.g. private to our app)
-            val preferences = getSharedPreferences("gwu-explorer", Context.MODE_PRIVATE)
-            // Writing to preferences (make sure you call apply)
-            preferences.edit().putString("saved_stationName", stationname.text.toString()).apply()
-            // Reading from preferences, indicate default if not present
-            val savedStationName = preferences.getString("saved_stationName", "")
-
-        }
-
-
-        
         go.setOnClickListener {
 
            // val choices = listOf("667 M Street Washington, DC 20585", "668 M Street Washington, DC 20585")
-
-
-
                 // Pass a context (e.g. Activity) and locale
                 val geocoder = Geocoder(this, Locale.getDefault())
-                val locationName = stationname.getText().toString()
-
+                val locationName : String? = stationname.getText().toString()
                 val maxResults = 3
 
-                val results: List<Address> = geocoder.getFromLocationName(locationName, maxResults)
+                val results: List<Address>? = geocoder.getFromLocationName(locationName, maxResults)
 
-                lateinit var addr: MutableList<String?>
+              //  lateinit var addr: MutableList<String?>
 
-                if (results != null && results.size > 0) {
-
+                if (results != null && results.isNotEmpty()) {
 
 //                var addString: String?
 //
@@ -95,7 +81,9 @@ class MainActivity : AppCompatActivity() {
 //                    x++
 //                }
 
-                     first = results[0]
+                first = results[0]
+
+
 
                     val firstAdd = first.getAddressLine(0)
                     Log.d("first:","test$first")
@@ -106,17 +94,18 @@ class MainActivity : AppCompatActivity() {
 //              addr = mutableListOf(firstAdd)
 
 
-                }
-
             entManager.retrieveNearbyStation(
                 address = first,
                 successCallback = { list,station ->
                     runOnUiThread {
                         // Create the adapter and assign it to the RecyclerView
 
-
                         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
                         arrayAdapter.addAll(list)
+
+                        if(list.isEmpty()){
+                            Toast.makeText(this@MainActivity, "List is empty...Try again", Toast.LENGTH_LONG).show()
+                        }
 
                         AlertDialog.Builder(this)
                             .setTitle("Select an option")
@@ -136,24 +125,26 @@ class MainActivity : AppCompatActivity() {
                             }
                             .show()
 
-
                     }
                 },
                 errorCallback = {
                     runOnUiThread {
                         // Runs if we have an error
-                        Toast.makeText(this@MainActivity, "Error retrieving Tweets", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MainActivity, "Error retrieving Station name", Toast.LENGTH_LONG).show()
                     }
                 })
 
-
-            saveData();
-            loadData();
-
-
+                        saveData()
+                        loadData()
+                    
             //val intent: Intent = Intent(this, RouteActivity::class.java)
+            //startActivity(intent)
+                }
 
-           //startActivity(intent)
+                else{
+                    Toast.makeText(this@MainActivity, "Try new name", Toast.LENGTH_LONG).show()
+
+                }
         }
 
         alert.setOnClickListener {
@@ -161,13 +152,9 @@ class MainActivity : AppCompatActivity() {
 
             startActivity(intent2)
         }
-
         loadData()
         updateText()
-
     }
-
-
 
     private  fun saveData ()
     {
