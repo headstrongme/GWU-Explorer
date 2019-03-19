@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
                         saveData()
                         loadData()
-                    
+
             //val intent: Intent = Intent(this, RouteActivity::class.java)
             //startActivity(intent)
                 }
