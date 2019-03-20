@@ -30,7 +30,7 @@ class RouteManager {
     fun retrieveStationList(
 
         codeNext:String,
-        successCallback: (List<String>) -> Unit,
+        successCallback: (List<String> , String) -> Unit,
         errorCallback: (Exception) -> Unit
     ) {
         // Data setup
@@ -65,7 +65,10 @@ class RouteManager {
                         stationCode.add(code)
 
                     }
-                    successCallback(stationCode)
+                    val now = statuses.getJSONObject(0)
+                    val LineCode=now.getString("LineCode")
+
+                    successCallback(stationCode,LineCode)
                     //...
                 } else {
                     // Invoke the callback passed to our [retrieveTweets] function.

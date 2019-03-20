@@ -42,25 +42,13 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("OK"){dialog, which ->  }
             .show()
 
-//        if (checkedBox.isChecked()) {
-//
-//            // Pass the name and the file-create mode (e.g. private to our app)
-//            val preferences = getSharedPreferences("gwu-explorer", Context.MODE_PRIVATE)
-//            // Writing to preferences (make sure you call apply)
-//            preferences.edit().putString("saved_stationName", stationname.text.toString()).apply()
-//            // Reading from preferences, indicate default if not present
-//            val savedStationName = preferences.getString("saved_stationName", "")
-//
-//        }
 
         go.setOnClickListener {
 
-           // val choices = listOf("667 M Street Washington, DC 20585", "668 M Street Washington, DC 20585")
                 // Pass a context (e.g. Activity) and locale
                 val geocoder = Geocoder(this, Locale.getDefault())
                 val locationName : String? = stationname.getText().toString()
                 val maxResults = 3
-
                 val results: List<Address>? = geocoder.getFromLocationName(locationName, maxResults)
 
               //  lateinit var addr: MutableList<String?>
@@ -82,16 +70,6 @@ class MainActivity : AppCompatActivity() {
 //                }
 
                 first = results[0]
-
-
-
-                    val firstAdd = first.getAddressLine(0)
-                    Log.d("first:","test$first")
-//
-//              val secondAdd = first.getAddressLine(1)
-//              Log.d("second Add:", secondAdd)
-//              val  addr: List<String> = listOf(firstAdd)
-//              addr = mutableListOf(firstAdd)
 
 
             entManager.retrieveNearbyStation(
@@ -117,6 +95,7 @@ class MainActivity : AppCompatActivity() {
 
                                 val intent = Intent(this, RouteActivity::class.java)
                                 intent.putExtra("StationCode", temp)
+                                intent.putExtra("Name","${list[which]}")
                                 startActivity(intent)
 
                             }
@@ -133,12 +112,9 @@ class MainActivity : AppCompatActivity() {
                         Toast.makeText(this@MainActivity, "Error retrieving Station name", Toast.LENGTH_LONG).show()
                     }
                 })
-
                         saveData()
                         loadData()
 
-            //val intent: Intent = Intent(this, RouteActivity::class.java)
-            //startActivity(intent)
                 }
 
                 else{
