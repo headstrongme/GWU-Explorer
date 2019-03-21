@@ -1,5 +1,6 @@
 package com.metro.gwuexplorer
 
+import android.util.Log
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
@@ -9,6 +10,7 @@ import java.util.concurrent.TimeUnit
 class RouteManager {
 
     private val okHttpClient: OkHttpClient
+     var LineCode: String =""
 
     init {
         val builder = OkHttpClient.Builder()
@@ -56,22 +58,30 @@ class RouteManager {
                 val responseString = response.body()?.string()
 
                 if (response.isSuccessful && responseString != null) {
+
                     val statuses = JSONObject(responseString).getJSONArray("Path")
+
+                    //checks if JsonArray is empty or not  //Edge Case
+                    if(statuses.length() != 0){
+                    //Log.d("JSONArray","$statuses")
+                        val now = statuses.getJSONObject(0)
+                      LineCode = now.getString("LineCode")
+                        
+                    }
+
+
                     for (i in 0 until statuses.length()) {
                         val curr = statuses.getJSONObject(i)
-
                         val code:String = curr.getString("StationName")
 
                         stationCode.add(code)
 
                     }
-                    val now = statuses.getJSONObject(0)
-                    val LineCode=now.getString("LineCode")
 
                     successCallback(stationCode,LineCode)
                     //...
                 } else {
-                    // Invoke the callback passed to our [retrieveTweets] function.
+                    // Invoke the callback passed to our [retrieveStationList] function.
                     errorCallback(Exception("Search Entrances call failed"))
                 }
             }

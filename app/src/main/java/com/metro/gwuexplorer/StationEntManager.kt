@@ -74,7 +74,7 @@ class StationEntManager {
                     successCallback(ent,stationCode)
 
                 } else {
-                    // Invoke the callback passed to our [retrieveTweets] function.
+                    // Invoke the callback passed to our [retrieveNearbyStation] function.
                     errorCallback(Exception("Search Entrances call failed"))
                 }
             }

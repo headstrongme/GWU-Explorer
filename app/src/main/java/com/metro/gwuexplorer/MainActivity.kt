@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
 
             entManager.retrieveNearbyStation(
+                //passing the first result
                 address = first,
                 successCallback = { list,station ->
                     runOnUiThread {
@@ -118,13 +119,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 else{
+                    //if result is empty or does not give station name, below toast will appear
                     Toast.makeText(this@MainActivity, "Try new name", Toast.LENGTH_LONG).show()
 
                 }
         }
 
         alert.setOnClickListener {
-            val intent2: Intent = Intent(this, AlertActivity::class.java)
+            val intent2 = Intent(this, AlertActivity::class.java)
 
             startActivity(intent2)
         }
@@ -132,6 +134,8 @@ class MainActivity : AppCompatActivity() {
         updateText()
     }
 
+
+    // Below code is for shared preference
     private  fun saveData ()
     {
         // Pass the name and the file-create mode (e.g. private to our app)

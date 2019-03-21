@@ -34,17 +34,20 @@ class RouteActivity : AppCompatActivity() {
         val stationcodeNext:String =intentt.getStringExtra("StationCode")
         val locationName:String = intentt.getStringExtra("Name")
 
-        val hm: HashMap<String, String> = hashMapOf( "SL" to "Silver", "GR" to "Green", "BL" to "Blue", "RD" to "Red","YL" to "Yellow", "OR" to "Orange")
+        // Using HashMap to get the value for line by using the LineCode received though API call
+        val hm: HashMap<String, String> = hashMapOf( "SV" to "Silver", "GR" to "Green", "BL" to "Blue", "RD" to "Red","YL" to "Yellow", "OR" to "Orange")
 
         routeManager.retrieveStationList(
             codeNext=stationcodeNext,
             successCallback = { path,line ->
                 runOnUiThread {
                     // Create the adapter and assign it to the RecyclerView
-
-                    /* TODO change adapter below*/
+                    //Using same recycle view for Alerts as well
                     recyclerView.adapter = RouteAdapter(path)
+
+                    //Below will tell user which line to take as a Toast
                     val temp: String? = hm.get(line)
+
                     Toast.makeText(this@RouteActivity, "Kindly take $temp line", Toast.LENGTH_LONG).show()
 
                 }
@@ -58,6 +61,8 @@ class RouteActivity : AppCompatActivity() {
         )
 
 
+        //Implicit intent which allows us to choose application to share message
+
         share.setOnClickListener {
             val sendIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -69,10 +74,12 @@ class RouteActivity : AppCompatActivity() {
         }
 
 
+        // Explicit intent which shows google map direction
+
         direc.setOnClickListener {
 
-            // Create a Uri from an intent string. Use the result to create an Intent.
-            val navigationUri = Uri.parse("google.navigation:q=$locationName")
+            //HardCoding LatLng of Foggy Bottom and parsing destination location using encode method
+            val navigationUri = Uri.parse ("geo:38.9009,77.0505?q=" + Uri.encode(locationName+ ", Washington, DC metro"))
             // Create an Intent from navigationUri. Set the action to ACTION_VIEW
             val mapIntent = Intent(Intent.ACTION_VIEW, navigationUri)
             // Make the Intent explicit by setting the Google Maps package

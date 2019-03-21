@@ -21,10 +21,6 @@ class AlertActivity : AppCompatActivity() {
         // Set the direction of our list to be vertical
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-       // val alert = generateFakeAlert()
-
-        // Create the adapter and assign it to the RecyclerView
-
 
 
         alertManager.retrieveAlert(
@@ -37,6 +33,7 @@ class AlertActivity : AppCompatActivity() {
                         recyclerView.adapter = AlertAdapter(alerts)
                     }
                     else{
+                        //This makes sure No blank screen is displayed and shows toast to inform user
                         Toast.makeText(this@AlertActivity, "No Alerts to show", Toast.LENGTH_LONG).show()
                     }
 
@@ -52,25 +49,4 @@ class AlertActivity : AppCompatActivity() {
         )
     }
 
-//    private fun generateFakeAlert(): List<Alert> {
-//        return listOf(
-//            Alert(
-//                lineName = "Bethesda ",
-//                icon = "https://...."
-//            ),
-//            Alert(
-//                lineName = "Dupont Circle ",
-//                icon = "https://...."
-//            ),
-//            Alert(
-//                lineName = "Bethesda ",
-//                icon = "https://...."
-//            ),
-//            Alert(
-//                lineName = "Dupont Circle ",
-//                icon = "https://...."
-//        )
-//        )
-//
-//    }
 }

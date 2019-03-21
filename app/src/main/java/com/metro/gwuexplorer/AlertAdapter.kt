@@ -31,7 +31,7 @@ class AlertAdapter constructor(private val alerts: List<Alert>) : RecyclerView.A
 
         val lineNameTextView: TextView = view.findViewById(R.id.lineName)
         val alert_contentTextView: TextView = view.findViewById(R.id.alert_content)
-        val iconImageView: ImageView = view.findViewById(R.id.icon)
+      //val iconImageView: ImageView = view.findViewById(R.id.icon)
 
     }
 }
