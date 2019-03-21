@@ -9,11 +9,11 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.*
-import java.util.*
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-
+    private val entManager: StationEntManager = StationEntManager()
     private lateinit var stationname : EditText
     private lateinit var remember: CheckBox
     private lateinit var go : Button
@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var checkedBox: CheckBox
     private lateinit var text: String
     private  var bool1: Boolean = false
+    private lateinit var first:Address
+    private lateinit var temp:String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,9 +33,6 @@ class MainActivity : AppCompatActivity() {
         remember = findViewById(R.id.remember)
         go = findViewById(R.id.go)
         alert = findViewById(R.id.alert)
-
-
-
         checkedBox = findViewById(R.id.remember);
 
         AlertDialog.Builder(this)
@@ -44,37 +43,17 @@ class MainActivity : AppCompatActivity() {
             .show()
 
 
-
-        if (checkedBox.isChecked()) {
-
-            // Pass the name and the file-create mode (e.g. private to our app)
-            val preferences = getSharedPreferences("gwu-explorer", Context.MODE_PRIVATE)
-            // Writing to preferences (make sure you call apply)
-            preferences.edit().putString("saved_stationName", stationname.text.toString()).apply()
-            // Reading from preferences, indicate default if not present
-            val savedStationName = preferences.getString("saved_stationName", "")
-
-        }
-
-
-        
         go.setOnClickListener {
-
-           // val choices = listOf("667 M Street Washington, DC 20585", "668 M Street Washington, DC 20585")
-
-
 
                 // Pass a context (e.g. Activity) and locale
                 val geocoder = Geocoder(this, Locale.getDefault())
-                val locationName = stationname.getText().toString()
-
+                val locationName : String? = stationname.getText().toString()
                 val maxResults = 3
+                val results: List<Address>? = geocoder.getFromLocationName(locationName, maxResults)
 
-                val results: List<Address> = geocoder.getFromLocationName(locationName, maxResults)
-                lateinit var addr: MutableList<String?>
+              //  lateinit var addr: MutableList<String?>
 
-                if (results != null && results.size > 0) {
-
+                if (results != null && results.isNotEmpty()) {
 
 //                var addString: String?
 //
@@ -90,54 +69,74 @@ class MainActivity : AppCompatActivity() {
 //                    x++
 //                }
 
-                    val first = results[0]
-                    val firstAdd = first.getAddressLine(0)
-//
-//                //val secondAdd = first.getAddressLine(1)
-//               // Log.d("second Add:", secondAdd)
-//              // val  addr: List<String> = listOf(firstAdd)
-//
-                    addr = mutableListOf(firstAdd)
+                first = results[0]
 
+
+            entManager.retrieveNearbyStation(
+                //passing the first result
+                address = first,
+                successCallback = { list,station ->
+                    runOnUiThread {
+                        // Create the adapter and assign it to the RecyclerView
+
+                        val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
+                        arrayAdapter.addAll(list)
+
+                        if(list.isEmpty()){
+                            Toast.makeText(this@MainActivity, "List is empty...Try again", Toast.LENGTH_LONG).show()
+                        }
+
+                        AlertDialog.Builder(this)
+                            .setTitle("Select an option")
+                            .setAdapter(arrayAdapter) { dialog, which ->
+                                Toast.makeText(this, "You picked: ${list[which]}", Toast.LENGTH_SHORT).show()
+
+                            Log.d("code","${station[which]}")
+                                temp="${station[which]}"
+
+                                val intent = Intent(this, RouteActivity::class.java)
+                                intent.putExtra("StationCode", temp)
+                                intent.putExtra("Name","${list[which]}")
+                                startActivity(intent)
+
+                            }
+                            .setNegativeButton("Cancel") { dialog, which ->
+                                dialog.dismiss()
+                            }
+                            .show()
+
+                    }
+                },
+                errorCallback = {
+                    runOnUiThread {
+                        // Runs if we have an error
+                        Toast.makeText(this@MainActivity, "Error retrieving Station name", Toast.LENGTH_LONG).show()
+                    }
+                })
+                        saveData()
+                        loadData()
 
                 }
 
+                else{
+                    //if result is empty or does not give station name, below toast will appear
+                    Toast.makeText(this@MainActivity, "Try new name", Toast.LENGTH_LONG).show()
 
-
-
-            val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
-            arrayAdapter.addAll(addr)
-            AlertDialog.Builder(this)
-                .setTitle("Select an option")
-                .setAdapter(arrayAdapter) { dialog, which ->
-                    Toast.makeText(this, "You picked: ${addr[which]}", Toast.LENGTH_SHORT).show()
                 }
-                .setNegativeButton("Cancel") { dialog, which ->
-                    dialog.dismiss()
-                }
-                .show()
-
-
-            saveData();
-            loadData();
-
-
-            //val intent: Intent = Intent(this, RouteActivity::class.java)
-
-           //startActivity(intent)
         }
 
         alert.setOnClickListener {
-            val intent2: Intent = Intent(this, AlertActivity::class.java)
+            val intent2 = Intent(this, AlertActivity::class.java)
 
             startActivity(intent2)
         }
-
         loadData()
         updateText()
-
     }
-   private  fun saveData ()
+
+
+    // Below code is for shared preference
+    private  fun saveData ()
     {
         // Pass the name and the file-create mode (e.g. private to our app)
         val preferences = getSharedPreferences("gwu-explorer", Context.MODE_PRIVATE)
